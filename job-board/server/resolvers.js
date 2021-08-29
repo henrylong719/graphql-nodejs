@@ -7,8 +7,13 @@ const Query = {
 };
 
 const Mutation = {
-  createJob: (root, { input }) => {
-    const id = db.jobs.create(input);
+  createJob: (root, { input }, context) => {
+    if (!context.user) {
+      throw new Error('Unauthorized');
+    }
+
+    console.log(context.user);
+    const id = db.jobs.create({ ...input, companyId: context.user.companyId });
     return db.jobs.get(id);
   },
 };
